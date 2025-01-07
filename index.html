@@ -282,6 +282,10 @@ form{margin-left: 23px;}
           else if (i.weather[0].main == `Mist`) {
             document.querySelector('.image').src = `img/mist.png`;
           }
+
+          else if (i.weather[0].main == `Fog`) {
+            document.querySelector('.image').src = `img/mist.png`;
+          }
           document.querySelector(".row").style.visibility = "visible"
 
           document.querySelector(".image").style.display = "block"
@@ -354,6 +358,10 @@ form{margin-left: 23px;}
           }
 
           else if (i.weather[0].main == `Mist`) {
+            document.querySelector('.image').src = `img/mist.png`;
+          }
+
+          else if (i.weather[0].main == `Fog`) {
             document.querySelector('.image').src = `img/mist.png`;
           }
             document.querySelector(".row").style.visibility = "visible"
