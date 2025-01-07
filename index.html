@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>weather</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    * {
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    body{
+      font-family: system-ui, sans-serif;
+      /* background:black; */
+    }
+
+    .container {
+      border: 1px solid rgb(216, 216, 233);
+      height: 550px;
+      margin: auto;
+      max-width: 550px;
+      margin-top: 50px;
+      border-radius: 40px;
+      box-shadow:  0px 0px 10px   ;
+
+      font-family: system-ui, sans-serif;
+      position: relative;
+      background: url(img/weather.webp) no-repeat center top/cover;
+    }
+    /* .container:hover{ box-shadow:  5px 5px 5px  rgb(38, 0, 128);} */
+
+    form {
+      margin-top: 50px;
+      text-align: center;
+      display: flex;
+      flex-flow:row wrap;
+      gap: 5px;
+      justify-content: center;
+    }
+
+    input {
+      padding: 10px;
+      border-radius: 10px;
+      border: 2px solid rgb(223, 223, 238);
+     
+     
+    }
+
+    
+
+    button {
+      padding: 10px;
+      border-radius: 10px;
+      border: 2px solid rgb(223, 223, 235);
+      font-size: 15px;
+      color: rgb(63, 63, 63);
+      cursor: pointer;
+    }
+
+  
+
+    form span {
+      margin-left: 10px;
+      color: red;
+    }
+
+    input:focus {
+      outline: 1px solid rgb(189, 189, 201);
+    }
+
+    ::placeholder {
+      font-size: 16px;
+    }
+
+    .weather-text {
+      font-size: 20px;
+      color: rgb(242, 242, 246);
+      margin-right: 10px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 50px;
+      font-style: italic;
+      color: rgb(249, 249, 253);
+    }
+
+
+
+    p {
+      text-align: center;
+
+      font-size: 50px;
+      font-style: italic;
+      color: rgb(248, 248, 252);
+    }
+
+    .weather {
+      text-align: center;
+
+      font-size: 50px;
+      font-style: italic;
+      color: rgb(242, 242, 245);
+    }
+
+    .row {
+      display: flex;
+
+      width: 500px;
+      height: 60px;
+      border-radius: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      justify-content: space-between;
+
+      position: absolute;
+      bottom: 40px;
+    }
+
+    :is(.temp_max, .temp_min, .pressure) {
+      color: rgb(252, 252, 254);
+    }
+
+    :is(.temp_max, .temp_min, .pressure) p {
+      font-size: 20px;
+    }
+
+    .temp_min {
+      padding-left: 10px;
+    }
+
+    .pressure {
+      margin-right: 10px;
+    }
+
+    .image {
+      margin: auto;
+      margin-top: 30px;
+      display: none;
+    }
+
+    #location {
+      display: block;
+      margin: auto;
+    }
+
+
+    @media screen and (max-width:460px) {
+      h1{font-size: 39px;}
+      p{font-size: 2rem;}
+      .weather{font-size: 2rem;}
+      .row{ width: 328px;}
+
+
+.current-city-weather{order: -1;}
+.weather-text{display: none;}
+form{margin-left: 23px;}
+      
+      
+    }
+
+   
+  </style>
+</head>
+
+<body>
+
+
+  <div class="container">
+   
+    <form name="weather">
+     
+
+      <label><span class="weather-text">weather:</span><input type="search" name="city" required pattern="[A-Za-z]+"
+          placeholder="Find weather"></label>
+      <button type="submit">submit</button>
+      <button class="current-city-weather" aria-label="location"> <span class="fa  fa-location-dot" id="location"></span></button>
+
+
+    </form>
+    <h1>Enter city name</h1>
+    <img class="image" src="" width="100" height="100" >
+   
+    <p></p>
+    <p class="weather"></p>
+  </div>
+
+
+  <script>
+    "use strict";
+
+    document.querySelector(`[name="city"]`).addEventListener("input", function (e) {
+      if (this.value == "") {
+        document.querySelector("h1").innerHTML = `Enter city name `;
+
+        document.querySelector("p").innerHTML = ``;
+        document.querySelector(".weather").innerHTML = "";
+        document.querySelector(".row").style.visibility = "hidden"
+        document.querySelector(".image").style.display = "none"
+
+      };
+    });
+    document.querySelector(`[name="weather"]`).addEventListener("submit", function (e) {
+      e.preventDefault();
+      let city = this.city.value;
+      const key = 'dbac57ad4674d6004dfc716c4f02f294';
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=metric`;
+      document.querySelector('[name="weather"] button').setAttribute("disabled", "");
+
+      fetch(url).then(i => i.json()).then(i => {
+        console.log(i);
+        let div = document.querySelector(".row");
+        if (!div) {
+          div = document.createElement("div");
+          div.classList.add("row");
+          document.querySelector(".container").appendChild(div);
+
+          document.querySelector(".row").innerHTML = `<div class="temp_min"><p></p>
+                <b>temp. min</b> </div><div class="temp_max"><p></p>
+                <b>temp. max</b> </div><div class="pressure"><p></p>
+                <b>pressure</b> </div>`;
+        };
+
+
+
+
+        let res = i.main;
+        if (i.cod == 404) {
+          document.querySelector("h1").innerHTML = `no city found`;
+          document.querySelector(".image").style.display = "none"
+          document.querySelector("p").innerHTML = ``;
+          document.querySelector(".weather").innerHTML = "";
+          document.querySelector(".image").src = ""
+          document.querySelector(".temp_min p").innerHTML = "";
+          document.querySelector(".temp_max p").innerHTML = "";
+          document.querySelector(".pressure p").innerHTML = "";
+          document.querySelector(".row").style.visibility = "hidden"
+          document.querySelector('[name="weather"] button').removeAttribute("disabled");
+
+        }
+
+
+        else {
+
+          document.querySelector("h1").innerHTML = i.name;
+          document.querySelector("p").innerHTML = `${res.temp} °C`;
+          document.querySelector(".weather").innerHTML = i.weather[0].main;
+          document.querySelector(".temp_min p").innerHTML = ` ${res.temp_min}°C `;
+          document.querySelector(".temp_max p").innerHTML = ` ${res.temp_max}°C `;
+          document.querySelector(".pressure p").innerHTML = res.pressure;
+
+          if (i.weather[0].main == `Clouds`) {
+            document.querySelector('.image').src = `img/cloudy.png`;
+          }
+
+          else if (i.weather[0].main == `Haze`) {
+            document.querySelector('.image').src = `img/haze.png`;
+          }
+
+          else if (i.weather[0].main == `Clear`) {
+            document.querySelector('.image').src = `img/sun.png`;
+          }
+
+          else if (i.weather[0].main == `Storm`) {
+            document.querySelector('.image').src = `img/storm.png`;
+          }
+
+          else if (i.weather[0].main == `Rain`) {
+            document.querySelector('.image').src = `img/rain.png`;
+          }
+
+          else if (i.weather[0].main == `Snow`) {
+            document.querySelector('.image').src = `img/snowy.png`;
+          }
+
+          else if (i.weather[0].main == `Mist`) {
+            document.querySelector('.image').src = `img/mist.png`;
+          }
+          document.querySelector(".row").style.visibility = "visible"
+
+          document.querySelector(".image").style.display = "block"
+
+          document.querySelector(`[name="weather"] button`).removeAttribute("disabled")
+        }
+      }).catch(e => { console.warn(e) });
+    })
+
+
+    document.querySelector("#location").addEventListener("click", function () {
+      document.querySelector('[name="weather"] button').setAttribute("disabled", "");
+      navigator.geolocation.getCurrentPosition(done, error);
+
+      function done(weather) {
+        let lat = weather.coords.latitude;
+        let lon = weather.coords.longitude;
+        const key = `dbac57ad4674d6004dfc716c4f02f294`
+
+        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}&units=metric`).then(i => i.json()).then(i => {
+          console.log(i)
+          let div = document.querySelector(".row");
+          if (!div) {
+            div = document.createElement("div");
+            div.classList.add("row");
+            document.querySelector(".container").appendChild(div);
+
+            document.querySelector(".row").innerHTML = `<div class="temp_min"><p></p>
+                <b>temp_min</b> </div><div class="temp_max"><p></p>
+                <b>temp_max</b> </div><div class="pressure"><p></p>
+                <b>pressure</b> </div>`;
+          };
+
+
+
+
+          let res = i.main;
+          if (i.cod == 200) {
+
+
+            document.querySelector("h1").innerHTML = i.name;
+            document.querySelector("p").innerHTML = `${res.temp} °C`;
+            document.querySelector(".weather").innerHTML = i.weather[0].main;
+            document.querySelector(".temp_min p").innerHTML = ` ${res.temp_min}°C `;
+            document.querySelector(".temp_max p").innerHTML = ` ${res.temp_max}°C `;
+            document.querySelector(".pressure p").innerHTML = res.pressure;
+
+            if (i.weather[0].main == `Clouds`) {
+              document.querySelector('.image').src = `img/cloudy.png`;
+            }
+
+            else if (i.weather[0].main == `Haze`) {
+              document.querySelector('.image').src = `img/haze.png`;
+            }
+
+            else if (i.weather[0].main == `Clear`) {
+              document.querySelector('.image').src = `img/sun.png`;
+            }
+
+            else if (i.weather[0].main == `Storm`) {
+              document.querySelector('.image').src = `img/storm.png`;
+            }
+
+            else if (i.weather[0].main == `Rain`) {
+              document.querySelector('.image').src = `img/rain.png`;
+            }
+
+            else if (i.weather[0].main == `Snow`) {
+            document.querySelector('.image').src = `img/snowy.png`;
+          }
+
+          else if (i.weather[0].main == `Mist`) {
+            document.querySelector('.image').src = `img/mist.png`;
+          }
+            document.querySelector(".row").style.visibility = "visible"
+
+            document.querySelector(".image").style.display = "block"
+
+            document.querySelector(`[name="weather"] button`).removeAttribute("disabled")
+
+          }
+
+
+          else {
+            document.querySelector("h1").innerHTML = `no city found`;
+            document.querySelector(".image").style.display = "none"
+            document.querySelector("p").innerHTML = ``;
+            document.querySelector(".weather").innerHTML = "";
+            document.querySelector(".image").src = ""
+            document.querySelector(".temp_min p").innerHTML = "";
+            document.querySelector(".temp_max p").innerHTML = "";
+            document.querySelector(".pressure p").innerHTML = "";
+            document.querySelector(".row").style.visibility = "hidden"
+            document.querySelector('[name="weather"] button').removeAttribute("disabled");
+          }
+
+
+        })
+      }
+
+      function error(weather) {
+        console.log(weather)
+      };
+    })
+  </script>
+</body>
+
+</html>
+
